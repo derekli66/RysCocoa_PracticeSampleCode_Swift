@@ -16,7 +16,7 @@ func == (lhs: ProductData, rhs: ProductData) -> Bool {
     return false
 }
 
-struct ProductData: Equatable {
+class ProductData: NSObject, Equatable {
     var name: String!
     var price: NSDecimalNumber!
     var image: NSImage?
@@ -29,7 +29,7 @@ struct ProductData: Equatable {
 }
 
 class ProductListData: NSObject {
-    var products: [ProductData] = []
+    var products = [ProductData]()
     
     // https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/Compliant.html#//apple_ref/doc/uid/20002172
     // Ready for KVO
@@ -37,16 +37,22 @@ class ProductListData: NSObject {
         return products.count
     }
     
-    func objectInProductsAtIndex(index: Int) -> Any? {
+    func objectInProductsAtIndex(index: Int) -> AnyObject? {
         return products[index]
     }
     
     func insertObject(object: ProductData, inProductsAtIndex index: Int) {
+        // manual KVO compliance
+        self.willChange(NSKeyValueChange.Insertion, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
         products.insert(object, atIndex: index)
+        self.didChange(NSKeyValueChange.Insertion, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
     }
     
     func removeObjectFromProductsAtIndex(index: Int) {
+        // manual KVO compliance
+        self.willChange(NSKeyValueChange.Removal, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
         products.removeAtIndex(index)
+        self.didChange(NSKeyValueChange.Removal, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
     }
     
     // Convenient method

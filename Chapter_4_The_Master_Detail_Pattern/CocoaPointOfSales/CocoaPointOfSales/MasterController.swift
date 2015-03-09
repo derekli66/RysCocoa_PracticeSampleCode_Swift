@@ -26,7 +26,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     override func awakeFromNib() {
-        self.productList.addObserver(self,
+        productList.addObserver(self,
             forKeyPath: "products",
             options: NSKeyValueObservingOptions.Old | NSKeyValueObservingOptions.New,
             context: nil)
@@ -51,6 +51,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     @IBAction func insertNewProduct(sender: AnyObject) {
+        
         let product: ProductData = ProductData(name: "New Product", price: NSDecimalNumber(string: "1.99"))
         var index = tableView.selectedRow
         if index == -1 {
@@ -93,7 +94,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         }
     }
     
-//MARK: NSTableViewDelegate
+    // MARK: NSTableViewDelegate
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return productList.countOfProducts()
     }
@@ -107,12 +108,10 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(notification: NSNotification) {
-        println("The user selected something")
         
         let selectedRow = tableView.selectedRow
         if selectedRow > -1 {
             let product: ProductData = productList.objectInProductsAtIndex(selectedRow) as ProductData
-            println("Selected product, \(product.name)")
         }
         else {
             println("No selection")
