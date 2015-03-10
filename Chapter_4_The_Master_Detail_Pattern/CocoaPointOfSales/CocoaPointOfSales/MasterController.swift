@@ -39,11 +39,27 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             if keyPath == "products" {
                 let changeTypeAsNumber: NSNumber = change[NSKeyValueChangeKindKey] as NSNumber
                 let changeType: NSKeyValueChange? = NSKeyValueChange(rawValue: changeTypeAsNumber.unsignedLongValue)
+                let indexes: NSIndexSet = change[NSKeyValueChangeIndexesKey] as NSIndexSet
+                let index = indexes.firstIndex
                 
                 // optional check
                 if let theType = changeType {
                     // Use Swift type switch case
-                    println("Set a new value")
+                    switch theType {
+                    case .Insertion:
+                        // Update the table view to match
+                        tableView.beginUpdates()
+                        tableView.insertRowsAtIndexes(NSIndexSet(index: index), withAnimation: NSTableViewAnimationOptions.SlideDown)
+                        tableView.scrollRowToVisible(index)
+                        tableView.endUpdates()
+                    case .Removal:
+                        tableView.beginUpdates()
+                        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: NSTableViewAnimationOptions.EffectFade)
+                        tableView.scrollRowToVisible(index)
+                        tableView.endUpdates()
+                    default:
+                        break
+                    }
                 }
 
             }
@@ -51,7 +67,6 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     @IBAction func insertNewProduct(sender: AnyObject) {
-        
         let product: ProductData = ProductData(name: "New Product", price: NSDecimalNumber(string: "1.99"))
         var index = tableView.selectedRow
         if index == -1 {
@@ -60,12 +75,6 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         }
         
         productList.insertObject(product, inProductsAtIndex: index)
-        
-        // Tell the table view it needs updating
-        tableView.beginUpdates()
-        tableView.insertRowsAtIndexes(NSIndexSet(index: index), withAnimation: NSTableViewAnimationOptions.SlideLeft | NSTableViewAnimationOptions.EffectFade)
-        tableView.scrollRowToVisible(index)
-        tableView.endUpdates()
         
         // Select the new row
         tableView.selectRowIndexes(NSIndexSet(index: index), byExtendingSelection: false)
@@ -78,11 +87,6 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         }
         
         productList.removeObjectFromProductsAtIndex(index)
-        
-        tableView.beginUpdates()
-        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: NSTableViewAnimationOptions.EffectFade)
-        tableView.scrollRowToVisible(index)
-        tableView.endUpdates()
         
         if productList.countOfProducts() > 0 {
             var newIndex = index - 1
@@ -108,10 +112,10 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(notification: NSNotification) {
-        
         let selectedRow = tableView.selectedRow
         if selectedRow > -1 {
             let product: ProductData = productList.objectInProductsAtIndex(selectedRow) as ProductData
+            println("Selected product: \(product.name)")
         }
         else {
             println("No selection")
