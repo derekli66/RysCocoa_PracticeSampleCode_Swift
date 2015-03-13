@@ -73,6 +73,41 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         }
     }
     
+    // MARK: Public methods
+    func saveSelectionToUserDefaults() {
+        let currentSelection = tableView.selectedRow
+        let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        defaults.setInteger(currentSelection, forKey: NSUserDefaultsConstants.InitialSelection)
+        println("Saved selected row: \(currentSelection)")
+    }
+    
+    func loadSelectionFromUserDefaults() {
+        let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        let initialSelection = defaults.integerForKey(NSUserDefaultsConstants.InitialSelection)
+        tableView.selectRowIndexes(NSIndexSet(index: initialSelection), byExtendingSelection: false)
+    }
+    
+    func saveProductsToFile(path: String) {
+        var productsArray = [Dictionary<String, AnyObject>]()
+        for product in productList.products {
+            var productInfo = Dictionary<String, AnyObject>()
+            productInfo["name"] = product.name
+            productInfo["price"] = product.price
+            
+            if let image = product.image {
+                productInfo["image"] = image
+            }
+            
+            productInfo["numberOfSales"] = NSNumber(integer: product.numberOfSales)
+            productsArray.append(productInfo)
+        }
+        
+        (productsArray as NSArray).writeToFile(path, atomically: true)
+        
+        println("Saved products: %@\nTo file: \(productsArray)")
+    }
+    
+    // MARK: IBAction
     @IBAction func insertNewProduct(sender: AnyObject) {
         let product: ProductData = ProductData(name: "New Product", price: NSDecimalNumber(string: "1.99"))
         var index = tableView.selectedRow
@@ -133,5 +168,8 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             detailController.product = nil
         }
     }
+    
+    // MARK: Private methods
+
     
 }
