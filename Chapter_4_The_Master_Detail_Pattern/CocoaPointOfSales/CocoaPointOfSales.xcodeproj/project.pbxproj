@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7130FF6B1AB2AAE6000B3F7B /* DetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7130FF6A1AB2AAE6000B3F7B /* DetailController.swift */; };
 		7134EC211A90C2D600677712 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7134EC201A90C2D600677712 /* AppDelegate.swift */; };
 		7134EC231A90C2D600677712 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7134EC221A90C2D600677712 /* Images.xcassets */; };
 		7134EC261A90C2D600677712 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7134EC241A90C2D600677712 /* MainMenu.xib */; };
@@ -26,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7130FF6A1AB2AAE6000B3F7B /* DetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailController.swift; sourceTree = "<group>"; };
 		7134EC1B1A90C2D600677712 /* CocoaPointOfSales.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CocoaPointOfSales.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7134EC1F1A90C2D600677712 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7134EC201A90C2D600677712 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				7134EC641A90C55B00677712 /* ProductData.swift */,
 				7134EC201A90C2D600677712 /* AppDelegate.swift */,
 				71DB6CBB1A91CCB3002A1A89 /* MasterController.swift */,
+				7130FF6A1AB2AAE6000B3F7B /* DetailController.swift */,
 				7134EC221A90C2D600677712 /* Images.xcassets */,
 				7134EC241A90C2D600677712 /* MainMenu.xib */,
 				7134EC1E1A90C2D600677712 /* Supporting Files */,
@@ -211,6 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7130FF6B1AB2AAE6000B3F7B /* DetailController.swift in Sources */,
 				71DB6CBC1A91CCB3002A1A89 /* MasterController.swift in Sources */,
 				7134EC211A90C2D600677712 /* AppDelegate.swift in Sources */,
 				7134EC651A90C55B00677712 /* ProductData.swift in Sources */,

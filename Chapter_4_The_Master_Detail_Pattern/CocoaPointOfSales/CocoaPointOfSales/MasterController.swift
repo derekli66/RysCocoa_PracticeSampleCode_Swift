@@ -11,6 +11,7 @@ import Cocoa
 class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var detailController: DetailController!
     
     var productList: ProductListData
     
@@ -35,7 +36,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        if object as NSObject === productList {
+        if object is ProductListData {
             if keyPath == "products" {
                 let changeTypeAsNumber: NSNumber = change[NSKeyValueChangeKindKey] as NSNumber
                 let changeType: NSKeyValueChange? = NSKeyValueChange(rawValue: changeTypeAsNumber.unsignedLongValue)
@@ -61,8 +62,14 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
                         break
                     }
                 }
-
             }
+        }
+        
+        if keyPath == "name" && object is ProductData {
+            // The selected product's name changed, so refresh that row in the table
+            let indexSet = NSIndexSet(index: productList.indexOfObjectInProducts(object as ProductData))
+            let columnSet = NSIndexSet(index: 0)
+            tableView.reloadDataForRowIndexes(indexSet, columnIndexes: columnSet)
         }
     }
     
@@ -112,13 +119,18 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(notification: NSNotification) {
+        
+        // Stop observing old product's name property
+        detailController.product?.removeObserver(self, forKeyPath: "name")
+        
         let selectedRow = tableView.selectedRow
         if selectedRow > -1 {
             let product: ProductData = productList.objectInProductsAtIndex(selectedRow) as ProductData
-            println("Selected product: \(product.name)")
+            detailController.product = product
+            detailController.product?.addObserver(self, forKeyPath: "name", options: .New | .Old, context:nil)
         }
         else {
-            println("No selection")
+            detailController.product = nil
         }
     }
     

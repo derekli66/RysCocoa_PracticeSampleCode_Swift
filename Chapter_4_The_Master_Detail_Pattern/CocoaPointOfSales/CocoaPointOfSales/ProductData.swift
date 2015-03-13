@@ -17,10 +17,10 @@ func == (lhs: ProductData, rhs: ProductData) -> Bool {
 }
 
 class ProductData: NSObject, Equatable {
-    var name: String!
+    dynamic var name: String!
     var price: NSDecimalNumber!
     var image: NSImage?
-    var numberOfSales: Int?
+    var numberOfSales: Int = 0
     
     init(name: String, price: NSDecimalNumber) {
         self.name = name
@@ -29,6 +29,8 @@ class ProductData: NSObject, Equatable {
 }
 
 class ProductListData: NSObject {
+    
+    // Using manual KVO
     var products = [ProductData]()
     
     // https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/Compliant.html#//apple_ref/doc/uid/20002172
