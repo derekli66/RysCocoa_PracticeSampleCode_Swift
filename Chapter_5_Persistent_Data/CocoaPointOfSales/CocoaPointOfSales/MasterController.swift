@@ -18,11 +18,6 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     override init() {
         self.productList = ProductListData()
         
-        // Add some dummy data
-        self.productList.insertObject(ProductData(name:"Coffee", price:NSDecimalNumber(string: "1.99")), inProductsAtIndex: 0)
-        self.productList.insertObject(ProductData(name:"Latte", price:NSDecimalNumber(string: "3.49")), inProductsAtIndex: 1)
-        self.productList.insertObject(ProductData(name:"Flat White", price:NSDecimalNumber(string: "3.99")), inProductsAtIndex: 2)
-        
         super.init()
     }
     
@@ -38,9 +33,9 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if object is ProductListData {
             if keyPath == "products" {
-                let changeTypeAsNumber: NSNumber = change[NSKeyValueChangeKindKey] as NSNumber
+                let changeTypeAsNumber: NSNumber = change[NSKeyValueChangeKindKey] as! NSNumber
                 let changeType: NSKeyValueChange? = NSKeyValueChange(rawValue: changeTypeAsNumber.unsignedLongValue)
-                let indexes: NSIndexSet = change[NSKeyValueChangeIndexesKey] as NSIndexSet
+                let indexes: NSIndexSet = change[NSKeyValueChangeIndexesKey] as! NSIndexSet
                 let index = indexes.firstIndex
                 
                 // optional check
@@ -67,7 +62,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         
         if keyPath == "name" && object is ProductData {
             // The selected product's name changed, so refresh that row in the table
-            let indexSet = NSIndexSet(index: productList.indexOfObjectInProducts(object as ProductData))
+            let indexSet = NSIndexSet(index: productList.indexOfObjectInProducts(object as! ProductData))
             let columnSet = NSIndexSet(index: 0)
             tableView.reloadDataForRowIndexes(indexSet, columnIndexes: columnSet)
         }
@@ -105,6 +100,37 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         (productsArray as NSArray).writeToFile(path, atomically: true)
         
         println("Saved products: %@\nTo file: \(productsArray)")
+    }
+    
+    func loadProductsFromFile(path: String) {
+        productList.removeObserver(self, forKeyPath: "products")
+        productList = ProductListData()
+        productList.addObserver(self, forKeyPath: "products", options:  NSKeyValueObservingOptions.Old | NSKeyValueObservingOptions.New, context: nil)
+        
+        // Load the array of dictionaries
+        if let productAsArray = NSArray(contentsOfFile: path) {
+            // Turn the array of dictionaries into products
+            for idx in 0..<productAsArray.count {
+                let productInfo: Dictionary? = productAsArray[idx] as? Dictionary<String, AnyObject>;
+                let name: String? = productInfo?["name"] as? String
+                let price: NSNumber? = productInfo?["price"] as? NSNumber
+                let anImage: NSImage? = productInfo?["image"] as? NSImage
+                let numberOfSales: Int? = (productInfo?["numberOfSales"] as? NSNumber)?.integerValue
+
+                if let proName = name, proPrice = price {
+                    let product = ProductData(name: proName, price: NSDecimalNumber(double: proPrice.doubleValue))
+                    
+                    if let numbers = numberOfSales { product.numberOfSales = numbers }
+                    if let image = anImage { product.image = image }
+                    
+                    productList.insertObject(product, inProductsAtIndex: idx)
+                }
+            }
+            
+            println("Loaded products: \(productAsArray) \nFrom file: \(path)")
+        }
+        
+        tableView.reloadData()
     }
     
     // MARK: IBAction
@@ -147,9 +173,12 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         // Request a view for the cell
-        let cellView: NSTableCellView = tableView.makeViewWithIdentifier("ProductNameCell", owner: nil) as NSTableCellView
-        let product: ProductData = productList.objectInProductsAtIndex(row) as ProductData
-        cellView.textField?.stringValue = product.name
+        let cellView: NSTableCellView = tableView.makeViewWithIdentifier("ProductNameCell", owner: nil) as! NSTableCellView
+        let product: ProductData? = productList.objectInProductsAtIndex(row)
+        if let productData = product {
+            cellView.textField?.stringValue = productData.name
+        }
+        
         return cellView
     }
     
@@ -160,7 +189,7 @@ class MasterController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         
         let selectedRow = tableView.selectedRow
         if selectedRow > -1 {
-            let product: ProductData = productList.objectInProductsAtIndex(selectedRow) as ProductData
+            let product: ProductData? = productList.objectInProductsAtIndex(selectedRow)
             detailController.product = product
             detailController.product?.addObserver(self, forKeyPath: "name", options: .New | .Old, context:nil)
         }

@@ -19,7 +19,7 @@ class DetailController: NSObject {
     
     var product: ProductData? {
         didSet {
-            println("Display product: \(self.product?)")
+            println("Display product: \(self.product)")
             self.synchronzieWithData()
         }
     }
@@ -74,7 +74,9 @@ class DetailController: NSObject {
     }
     
     @IBAction func changePrice(sender: AnyObject) {
-        let priceAsString = priceTextField.stringValue.stringByReplacingOccurrencesOfString("$", withString: "")
+        let notAllowedSet = NSCharacterSet(charactersInString: "0123456789.").invertedSet
+        let results = priceTextField.stringValue.componentsSeparatedByCharactersInSet(notAllowedSet)
+        let priceAsString = (results as NSArray).componentsJoinedByString("")
         product?.price = NSDecimalNumber(string: priceAsString)
         self.synchronzieWithData()
     }

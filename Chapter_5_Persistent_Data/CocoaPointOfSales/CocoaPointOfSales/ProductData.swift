@@ -39,7 +39,7 @@ class ProductListData: NSObject {
         return products.count
     }
     
-    func objectInProductsAtIndex(index: Int) -> AnyObject? {
+    func objectInProductsAtIndex(index: Int) -> ProductData? {
         return products[index]
     }
     
