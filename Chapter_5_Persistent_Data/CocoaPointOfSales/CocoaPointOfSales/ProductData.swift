@@ -16,7 +16,7 @@ func == (lhs: ProductData, rhs: ProductData) -> Bool {
     return false
 }
 
-class ProductData: NSObject, Equatable {
+class ProductData: NSObject, NSCoding, Equatable {
     dynamic var name: String!
     var price: NSDecimalNumber!
     var image: NSImage?
@@ -25,6 +25,21 @@ class ProductData: NSObject, Equatable {
     init(name: String, price: NSDecimalNumber) {
         self.name = name
         self.price = price
+    }
+    
+    // conform to protocol NSCoding
+    required init(coder aDecoder: NSCoder) {
+        self.name = aDecoder.decodeObjectForKey("name") as! String
+        self.price = aDecoder.decodeObjectForKey("price") as! NSDecimalNumber
+        self.image = aDecoder.decodeObjectForKey("image") as? NSImage
+        self.numberOfSales = aDecoder.decodeObjectForKey("numberOfSales") as! Int
+    }
+    
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(self.name, forKey: "name")
+        aCoder.encodeObject(self.price, forKey: "price")
+        aCoder.encodeObject(self.image, forKey: "image")
+        aCoder.encodeInt32(Int32(self.numberOfSales), forKey: "numberOfSales")
     }
 }
 

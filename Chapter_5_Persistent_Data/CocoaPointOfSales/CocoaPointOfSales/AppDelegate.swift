@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }()
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        if let savingPath = desktopPath?.stringByAppendingPathComponent("product-data.plist") {
+        if let savingPath = self.productDataFilePath() {
             masterController.loadProductsFromFile(savingPath)
         }
         
@@ -31,12 +31,45 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Save product list data to the path
-        if let savingPath = desktopPath?.stringByAppendingPathComponent("product-data.plist") {
+        if let savingPath = self.productDataFilePath() {
             masterController.saveProductsToFile(savingPath)
         }
         
         // Save user's selection
         masterController.saveSelectionToUserDefaults()
+    }
+    
+    func productDataFilePath() -> String? {
+        let fm: NSFileManager = NSFileManager.defaultManager()
+        let possibleURLs = fm.URLsForDirectory(NSSearchPathDirectory.ApplicationSupportDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask)
+        
+        if let url = possibleURLs.first as? NSURL {
+            var pathURL: NSURL?
+            if let dirName = NSBundle.mainBundle().bundleIdentifier {
+                pathURL = url.URLByAppendingPathComponent(dirName, isDirectory: true)
+                
+                // create directory
+                var error: NSError?
+                if let dirURL = pathURL,
+                       dirPath = pathURL?.path {
+                        if !fm.fileExistsAtPath(dirPath, isDirectory: nil) {
+                            let success = fm.createDirectoryAtURL(dirURL, withIntermediateDirectories:false, attributes:nil, error:&error)
+                            
+                            if !success {
+                                println("Could not create directory at \(pathURL) \(error?.localizedDescription)")
+                                return nil
+                            }
+                        }
+                }
+            }
+            
+            let fileName = "product-data.plist"
+            pathURL = pathURL?.URLByAppendingPathComponent(fileName)
+            return pathURL?.path
+        }
+        else {
+            return nil
+        }
     }
 }
 
