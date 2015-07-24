@@ -90,4 +90,24 @@ class DetailController: NSObject {
         product?.numberOfSales++
         self.synchronzieWithData()
     }
+    
+    @IBAction func selectImageWithPanel(sender: AnyObject) {
+        var panel: NSOpenPanel = NSOpenPanel()
+        
+        panel.allowedFileTypes = ["public.image"]
+        
+        panel.beginWithCompletionHandler { [weak panel] result in
+            if result == NSFileHandlingPanelOKButton {
+                if let url = panel?.URLs.first as? NSURL {
+                    if let image = NSImage(contentsOfURL: url) {
+                        self.product?.image = image
+                        self.synchronzieWithData()
+                    }
+                    else {
+                        println("Error loading image: \(url)")
+                    }
+                }
+            }
+        }
+    }
 }
