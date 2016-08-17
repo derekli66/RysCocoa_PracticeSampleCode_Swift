@@ -156,6 +156,8 @@
 		716535111B62421E0080F814 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "CHIENMING LEE";
 				TargetAttributes = {
@@ -412,6 +414,7 @@
 				7165353A1B62421E0080F814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7165353B1B62421E0080F814 /* Build configuration list for PBXNativeTarget "SimpleTextEditorTests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +423,7 @@
 				7165353D1B62421E0080F814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

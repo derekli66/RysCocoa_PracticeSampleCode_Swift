@@ -10,6 +10,8 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cheesedoc</string>
+				<string>txt</string>
+				<string>html</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string></string>
