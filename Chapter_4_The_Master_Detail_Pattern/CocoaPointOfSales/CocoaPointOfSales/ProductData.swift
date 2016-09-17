@@ -10,13 +10,18 @@ import Foundation
 import Cocoa
 
 func == (lhs: ProductData, rhs: ProductData) -> Bool {
-    if (lhs.name == rhs.name) && (lhs.price.compare(rhs.price) == NSComparisonResult.OrderedSame) {
+    if (lhs.name == rhs.name) && (lhs.price.compare(rhs.price) == ComparisonResult.orderedSame) {
         return true
     }
     return false
 }
 
-class ProductData: NSObject, Equatable {
+private func findIndex(of product: ProductData, in products: [ProductData]) -> Int? {
+    let index = products.index(of: product)
+    return index
+}
+
+class ProductData: NSObject {
     dynamic var name: String!
     var price: NSDecimalNumber!
     var image: NSImage?
@@ -39,28 +44,28 @@ class ProductListData: NSObject {
         return products.count
     }
     
-    func objectInProductsAtIndex(index: Int) -> AnyObject? {
+    func objectInProductsAtIndex(_ index: Int) -> AnyObject? {
         return products[index]
     }
     
-    func insertObject(object: ProductData, inProductsAtIndex index: Int) {
+    func insertObject(_ object: ProductData, inProductsAtIndex index: Int) {
         // manual KVO compliance
-        self.willChange(NSKeyValueChange.Insertion, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
-        products.insert(object, atIndex: index)
-        self.didChange(NSKeyValueChange.Insertion, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
+        self.willChange(NSKeyValueChange.insertion, valuesAt: IndexSet(integer: index), forKey: "products")
+        products.insert(object, at: index)
+        self.didChange(NSKeyValueChange.insertion, valuesAt: IndexSet(integer: index), forKey: "products")
     }
     
-    func removeObjectFromProductsAtIndex(index: Int) {
+    func removeObjectFromProductsAtIndex(_ index: Int) {
         // manual KVO compliance
-        self.willChange(NSKeyValueChange.Removal, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
-        products.removeAtIndex(index)
-        self.didChange(NSKeyValueChange.Removal, valuesAtIndexes: NSIndexSet(index: index), forKey: "products")
+        self.willChange(NSKeyValueChange.removal, valuesAt: IndexSet(integer: index), forKey: "products")
+        products.remove(at: index)
+        self.didChange(NSKeyValueChange.removal, valuesAt: IndexSet(integer: index), forKey: "products")
     }
     
     // Convenient method
-    func indexOfObjectInProducts(product: ProductData) -> Int {
+    func indexOfObjectInProducts(_ product: ProductData) -> Int {
         // find function must implement Equtable protocol on ProductData
-        if let result = find(self.products, product) {
+        if let result = findIndex(of: product, in: self.products) {
             return Int(result)
         }
         else {

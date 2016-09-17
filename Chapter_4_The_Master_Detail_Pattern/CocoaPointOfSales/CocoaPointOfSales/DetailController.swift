@@ -19,7 +19,7 @@ class DetailController: NSObject {
     
     var product: ProductData? {
         didSet {
-            println("Display product: \(self.product?)")
+            print("Display product: \(self.product)")
             self.synchronzieWithData()
         }
     }
@@ -31,20 +31,20 @@ class DetailController: NSObject {
     func synchronzieWithData() {
         // check optional
         if let product = self.product {
-            nameTextField.enabled = true
-            priceTextField.enabled = true
-            imageView.enabled = true
-            imageView.editable = true
-            editImageButton.enabled = true
-            makeSaleButton.enabled = true
+            nameTextField.isEnabled = true
+            priceTextField.isEnabled = true
+            imageView.isEnabled = true
+            imageView.isEditable = true
+            editImageButton.isEnabled = true
+            makeSaleButton.isEnabled = true
             
             nameTextField.stringValue = product.name
             imageView.image = product.image
             
-            let formatter: NSNumberFormatter = NSNumberFormatter()
-            formatter.numberStyle = NSNumberFormatterStyle.CurrencyStyle
+            let formatter: NumberFormatter = NumberFormatter()
+            formatter.numberStyle = NumberFormatter.Style.currency
             
-            if let stringValue = formatter.stringFromNumber(product.price) {
+            if let stringValue = formatter.string(from: product.price) {
                 priceTextField.stringValue = stringValue;
             }
             
@@ -53,12 +53,12 @@ class DetailController: NSObject {
         }
         else {
             // if product is nil
-            nameTextField.enabled = false
-            priceTextField.enabled = false
-            imageView.enabled = false
-            imageView.editable = false
-            editImageButton.enabled = false
-            makeSaleButton.enabled = false
+            nameTextField.isEnabled = false
+            priceTextField.isEnabled = false
+            imageView.isEnabled = false
+            imageView.isEditable = false
+            editImageButton.isEnabled = false
+            makeSaleButton.isEnabled = false
             
             nameTextField.stringValue = ""
             priceTextField.stringValue = ""
@@ -68,24 +68,24 @@ class DetailController: NSObject {
         }
     }
     
-    @IBAction func changeName(sender: AnyObject) {
+    @IBAction func changeName(_ sender: AnyObject) {
         product?.name = nameTextField.stringValue
         self.synchronzieWithData()
     }
     
-    @IBAction func changePrice(sender: AnyObject) {
-        let priceAsString = priceTextField.stringValue.stringByReplacingOccurrencesOfString("$", withString: "")
+    @IBAction func changePrice(_ sender: AnyObject) {
+        let priceAsString = priceTextField.stringValue.replacingOccurrences(of: "$", with: "")
         product?.price = NSDecimalNumber(string: priceAsString)
         self.synchronzieWithData()
     }
     
-    @IBAction func changeImage(sender: AnyObject) {
+    @IBAction func changeImage(_ sender: AnyObject) {
         product?.image = imageView.image
         self.synchronzieWithData()
     }
     
-    @IBAction func makeSale(sender: AnyObject) {
-        product?.numberOfSales++
+    @IBAction func makeSale(_ sender: AnyObject) {
+        product?.numberOfSales += 1
         self.synchronzieWithData()
     }
 }
